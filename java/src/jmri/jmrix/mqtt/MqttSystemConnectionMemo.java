@@ -25,7 +25,7 @@ public class MqttSystemConnectionMemo extends SystemConnectionMemo {
 //        setPowerManager(new jmri.jmrix.jmriclient.JMRIClientPowerManager(this));
 //        jmri.InstanceManager.store(getPowerManager(), jmri.PowerManager.class);
         InstanceManager.setTurnoutManager(getTurnoutManager());
-//        jmri.InstanceManager.setSensorManager(getSensorManager());
+        InstanceManager.setSensorManager(getSensorManager());
 //        jmri.InstanceManager.setLightManager(getLightManager());
 //        jmri.InstanceManager.setReporterManager(getReporterManager());
     }
@@ -51,6 +51,9 @@ public class MqttSystemConnectionMemo extends SystemConnectionMemo {
         if (type.equals(jmri.TurnoutManager.class)) {
             return true;
         }
+        if (type.equals(jmri.SensorManager.class)) {
+            return true;
+        }
         return false; // nothing, by default
     }
 
@@ -66,10 +69,14 @@ public class MqttSystemConnectionMemo extends SystemConnectionMemo {
         if (T.equals(jmri.TurnoutManager.class)) {
             return (T) getTurnoutManager();
         }
+       if (T.equals(jmri.SensorManager.class)) {
+            return (T) getSensorManager();
+        }
         return null; // nothing, by default
     }
 
     protected MqttTurnoutManager turnoutManager;
+    protected MqttSensorManager sensorManager;
 
     public MqttTurnoutManager getTurnoutManager() {
         if (getDisabled()) {
@@ -79,6 +86,16 @@ public class MqttSystemConnectionMemo extends SystemConnectionMemo {
             turnoutManager = new MqttTurnoutManager(this);
         }
         return turnoutManager;
+    }
+
+    public MqttSensorManager getSensorManager() {
+        if (getDisabled()) {
+            return null;
+        }
+        if (sensorManager == null) {
+            sensorManager = new MqttSensorManager(this);
+        }
+        return sensorManager;
     }
 
     void setMqttAdapter(MqttAdapter ma) {
